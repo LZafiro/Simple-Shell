@@ -20,5 +20,16 @@
 #include <stdbool.h>
 ////////////////////////////////////////////
 
+/* Global Variables */
+////////////////////////////////////////////
+/* Number of comments presented on the input */
+extern int numCommands;
+////////////////////////////////////////////
+
+/* Function Headders */
+////////////////////////////////////////////
+/* Creates a vector os matrixes. Each matrix refers to a command (in case of pipe) */
+char ***commandMatrixGenerator(int argc, char **argv);
+////////////////////////////////////////////
 
 #endif _SHELL_H_
