@@ -19,7 +19,5 @@ int main(int argc, char **argv){
 
     matList = commandMatrixGenerator(argc, argv);  
 
-    printf("%d\n", numCommands);  
-
     return 0;
 }
