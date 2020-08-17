@@ -9,10 +9,12 @@
 /* Global variable definition */
 int numCommands = 0;
 
-char ***commandMatrixGenerator(int argc, char **argv){
+char ***matList;
+
+void commandMatrixGenerator(int argc, char **argv){
     
     /* Array of pointers to char matrixes (strings) */
-    char ***matList = (char***)malloc(sizeof(char**));
+    matList = (char***)malloc(sizeof(char**));
 
     char **cmd = &argv[1];
     int n = argc - 1;
@@ -58,6 +60,5 @@ char ***commandMatrixGenerator(int argc, char **argv){
             numCommands++;
         }
     }
-    return(matList);
 }
 

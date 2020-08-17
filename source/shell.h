@@ -24,12 +24,16 @@
 ////////////////////////////////////////////
 /* Number of comments presented on the input */
 extern int numCommands;
+
+extern char ***matList;
 ////////////////////////////////////////////
 
 /* Function Headders */
 ////////////////////////////////////////////
 /* Creates a vector os matrixes. Each matrix refers to a command (in case of pipe) */
-char ***commandMatrixGenerator(int argc, char **argv);
+void commandMatrixGenerator(int argc, char **argv);
+
+void simpleCommands(char ***matList);
 ////////////////////////////////////////////
 
 #endif _SHELL_H_
