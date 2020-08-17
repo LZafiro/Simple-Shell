@@ -16,5 +16,7 @@ int main(int argc, char **argv){
 
     commandMatrixGenerator(argc, argv);  
 
+    simpleCommands(0,0);
+
     return 0;
 }
