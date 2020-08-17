@@ -20,11 +20,15 @@
 #include <stdbool.h>
 ////////////////////////////////////////////
 
+/* Constant definitions */
+////////////////////////////////////////////
+
+////////////////////////////////////////////
+
 /* Global Variables */
 ////////////////////////////////////////////
 /* Number of comments presented on the input */
 extern int numCommands;
-
 /* List of matrixes. Each one is a command matrix */
 extern char ***matList;
 ////////////////////////////////////////////
@@ -35,7 +39,10 @@ extern char ***matList;
 void commandMatrixGenerator(int argc, char **argv);
 
 /* Executes simple commands (non piped and non file types) */
-void simpleCommands(int inFD, int outFD);
+void simpleCommands();
+
+/* Executes piped commands */
+void pipedCommands();
 ////////////////////////////////////////////
 
 #endif _SHELL_H_
