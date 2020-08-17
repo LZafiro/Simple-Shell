@@ -63,7 +63,7 @@ void commandMatrixGenerator(int argc, char **argv){
 }
 
 
-void simpleCommands(int inFD, int outFD){
+void simpleCommands(){
 
     int status;
     pid_t pid = fork();
@@ -88,4 +88,29 @@ void simpleCommands(int inFD, int outFD){
         waitpid(-1, &status, 0);
 
     return;
+}
+
+
+void pipedCommands(){
+
+    /* File Descriptors */
+    int fd[numCommands - 1][2];
+
+    /* Pipes initialization */
+    for(int i = 0; i < (numCommands - 1); i++){
+
+        /* Creates a pipe based on the file descriptor passed */
+        int p = pipe(fd[i]);
+
+        if(pipe < 0){
+            perror("Pipe Creation");
+            exit(-1);
+        }
+    }
+
+    /* Creates all child processes of the pipe */
+    for(int i = 0; i < numCommands; i++){
+        
+    }
+
 }
