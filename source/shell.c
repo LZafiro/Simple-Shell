@@ -90,7 +90,7 @@ void pipedCommands(){
     /* File Descriptors */
     int fd[numCommands - 1][2];
     pid_t pid;
-    int i;
+    int i, status;
 
     /* Pipes initialization */
     for(i = 0; i < (numCommands - 1); i++){
@@ -137,12 +137,17 @@ void pipedCommands(){
 
         /* Parent */
         else{
-            /* Pipe closing, important */
-            for(i = 0; i < (numCommands - 1); i++)
-                close(fd[i][0]);
-                close(fd[i][1]);
-
-            wait(NULL);
+                /* Not the first onde */
+                if(i != 0){
+                    close(fd[i - 1][0]);
+                    close(fd[i - 1][1]);
+                }
+                
+            /* Wait for all children */
+            waitpid(-1, &status, 0);
+            /*  
+            ! Lembrar o que fazer com a variável status
+            */
         }
     }
 
