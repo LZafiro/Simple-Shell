@@ -70,11 +70,6 @@ void simpleCommands(){
     
     /* Child */
     if(pid == 0){
-
-        /*
-        TODO: Realizar verificações do inFD e outFD quando necessário
-        */
-
         /* 
         * Creates child process 
         * Passes the first command and first matrix, related to that command
@@ -92,13 +87,13 @@ void simpleCommands(){
 
 
 void pipedCommands(){
-
     /* File Descriptors */
     int fd[numCommands - 1][2];
+    pid_t pid;
+    int i;
 
     /* Pipes initialization */
-    for(int i = 0; i < (numCommands - 1); i++){
-
+    for(i = 0; i < (numCommands - 1); i++){
         /* Creates a pipe based on the file descriptor passed */
         int p = pipe(fd[i]);
 
@@ -109,8 +104,46 @@ void pipedCommands(){
     }
 
     /* Creates all child processes of the pipe */
-    for(int i = 0; i < numCommands; i++){
-        
+    for(i = 0; i < numCommands; i++){
+        /* Forks current process */
+        pid = fork();
+
+        /* Child */
+        if(pid == 0){
+
+            /* If it is the first child */
+            if(i == 0){
+                close(fd[i][0]);
+                dup2(fd[i][1], STDOUT_FILENO);
+            }
+
+            /* If it is the last child */
+            if(i == numCommands - 1){
+                close(fd[i - 1][1]);
+                dup2(fd[i - 1][0], STDIN_FILENO);
+            }
+
+            /* If it is a "middle" child */
+            else{
+                close(fd[i - 1][1]);
+                close(fd[i][0]);
+                dup2(fd[i - 1][0], STDIN_FILENO);
+                dup2(fd[i][1], STDOUT_FILENO);
+            }
+
+            /* Execution of the child */
+            execvp(matList[i][0], matList[i]);
+        }
+
+        /* Parent */
+        else{
+            /* Pipe closing, important */
+            for(i = 0; i < (numCommands - 1); i++)
+                close(fd[i][0]);
+                close(fd[i][1]);
+
+            wait(NULL);
+        }
     }
 
 }
