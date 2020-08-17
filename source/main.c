@@ -8,16 +8,15 @@
 
 int main(int argc, char **argv){
 
-    /* List of all commands formated: one matrix for each command and arguments */
-    char ***matList;
-
     /* No commands passed */
     if(argc == 1){
         printf("No commands found!\n");
         return 0;
     }
 
-    matList = commandMatrixGenerator(argc, argv);  
+    commandMatrixGenerator(argc, argv);  
+
+    simpleCommands(0,0);
 
     return 0;
 }

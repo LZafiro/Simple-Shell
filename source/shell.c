@@ -8,11 +8,13 @@
 
 /* Global variable definition */
 int numCommands = 0;
+char ***matList;
 
-char ***commandMatrixGenerator(int argc, char **argv){
+
+void commandMatrixGenerator(int argc, char **argv){
     
     /* Array of pointers to char matrixes (strings) */
-    char ***matList = (char***)malloc(sizeof(char**));
+    matList = (char***)malloc(sizeof(char**));
 
     char **cmd = &argv[1];
     int n = argc - 1;
@@ -58,6 +60,32 @@ char ***commandMatrixGenerator(int argc, char **argv){
             numCommands++;
         }
     }
-    return(matList);
 }
 
+
+void simpleCommands(int inFD, int outFD){
+
+    int status;
+    pid_t pid = fork();
+    
+    /* Child */
+    if(pid == 0){
+
+        /*
+        TODO: Realizar verificações do inFD e outFD quando necessário
+        */
+
+        /* 
+        * Creates child process 
+        * Passes the first command and first matrix, related to that command
+        */
+        execvp(matList[0][0], matList[0]);
+        perror("Simple Command Execution Error");
+    }
+
+    /* Parent */
+    else 
+        waitpid(-1, &status, 0);
+
+    return;
+}
