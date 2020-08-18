@@ -16,8 +16,7 @@ int main(int argc, char **argv){
 
     commandMatrixGenerator(argc, argv);  
 
-    pipedCommands();
-        
+    commandsExec();
 
     return 0;
 }
