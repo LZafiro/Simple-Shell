@@ -1,6 +1,6 @@
-/* Luiz Felipe Raveduti Zafiro - RA: 120513 */
-/* Leon Tenório da Silva - RA: 120--- */
-/* Operating Systems - Unifesp (SJC) - 2020 */
+/* Luiz Felipe Raveduti Zafiro       - RA: 120513 */
+/* Leon Tenório da Silva             - RA: 120488 */
+/* Operating Systems - Unifesp (SJC) - 2020       */
 
 /* Headder file implementation for the shell implementation project */
 
@@ -10,8 +10,16 @@
 int numCommands = 0;
 char ***matList;
 
+bool file_in = false;
+char arq_in[STR_LEN];
+bool file_out = false;
+bool out_append = false;
+char arq_out[STR_LEN];
 
 void commandMatrixGenerator(int argc, char **argv){
+    
+    bzero(arq_in, STR_LEN);
+    bzero(arq_out, STR_LEN);
     
     /* Array of pointers to char matrixes (strings) */
     matList = (char***)malloc(sizeof(char**));
@@ -35,15 +43,33 @@ void commandMatrixGenerator(int argc, char **argv){
     else matList[0] = NULL;
 
     /* Iterates thru all argc matrix (already without the fisrt line (./shell)) - cmd in main */
-    for(int i = 0; i < n; i++){
-
-        if(strcmp(cmd[i], "|") != 0){
+    i = 0;
+    while(i < n){
+        if(strcmp(cmd[i], "<")==0){
+            file_in = true;
+            strcpy(arq_in, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], ">")==0){
+            file_out = true;
+            out_append = false;
+            strcpy(arq_out, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], ">>")==0){
+            file_out = true;
+            out_append = true;
+            strcpy(arq_out, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], "|") != 0){
             /* Reallocs the matrix with one more line */
             matList[j] = (char **)realloc(matList[j], (k + 1) * sizeof(char*));
         
             /* Stores the string in the k line of the j matrix */
             matList[j][k] = cmd[i];
             k++;
+            i++;
         }
 
         else{
@@ -58,39 +84,19 @@ void commandMatrixGenerator(int argc, char **argv){
             j++;
             matList[j] = NULL;
             numCommands++;
+            i++;
         }
     }
 }
 
 
-void simpleCommands(){
-
-    int status;
-    pid_t pid = fork();
-    
-    /* Child */
-    if(pid == 0){
-        /* 
-        * Creates child process 
-        * Passes the first command and first matrix, related to that command
-        */
-        execvp(matList[0][0], matList[0]);
-        perror("Simple Command Execution Error");
-    }
-
-    /* Parent */
-    else 
-        waitpid(-1, &status, 0);
-
-    return;
-}
-
-
-void pipedCommands(){
+void commandsExec(){
     /* File Descriptors */
     int fd[numCommands - 1][2];
     pid_t pid;
-    int i;
+    int i, status;
+
+    int out_fd, in_fd;
 
     /* Pipes initialization */
     for(i = 0; i < (numCommands - 1); i++){
@@ -119,31 +125,72 @@ void pipedCommands(){
 
             /* If it is the last child */
             if(i == numCommands - 1){
-                close(fd[i - 1][1]);
-                dup2(fd[i - 1][0], STDIN_FILENO);
+                if(i > 0){
+                    close(fd[i - 1][1]);
+                    dup2(fd[i - 1][0], STDIN_FILENO);
+                }
+                
+                else if(file_in){
+                    in_fd = open(arq_in, O_RDONLY);
+                    dup2(in_fd, STDIN_FILENO);
+                }
+                
+                if(file_out){
+                    if(out_append){
+                        out_fd = open(arq_out, O_WRONLY|O_APPEND|O_CREAT, 0777);
+                    }
+                    
+                    else{
+                        out_fd = open(arq_out, O_WRONLY|O_TRUNC|O_CREAT, 0777);
+                    }
+                    
+                    dup2(out_fd, STDOUT_FILENO);
+                }
             }
 
             /* If it is a "middle" child */
             else{
-                close(fd[i - 1][1]);
+                if(i > 0)
+                    close(fd[i - 1][1]);
+
                 close(fd[i][0]);
-                dup2(fd[i - 1][0], STDIN_FILENO);
+                
+                if(i > 0)
+                    dup2(fd[i - 1][0], STDIN_FILENO);
+                
+                else if(file_in){
+                    in_fd = open(arq_in, O_RDONLY);
+                    dup2(in_fd, STDIN_FILENO);
+                }
+                
                 dup2(fd[i][1], STDOUT_FILENO);
             }
 
             /* Execution of the child */
             execvp(matList[i][0], matList[i]);
+            
+            if(file_out && i==numCommands-1){
+                close(out_fd);
+            }
+            
+            if(i==0 && file_in){
+                close(in_fd);
+            }
         }
 
         /* Parent */
         else{
-            /* Pipe closing, important */
-            for(i = 0; i < (numCommands - 1); i++)
-                close(fd[i][0]);
-                close(fd[i][1]);
-
-            wait(NULL);
+                /* Not the first onde */
+                if(i != 0){
+                    close(fd[i - 1][0]);
+                    close(fd[i - 1][1]);
+                }
+                
+            /* Wait for all children */
+            waitpid(-1, &status, 0);
+            /*  
+            ! Lembrar o que fazer com a variável status
+            */
         }
     }
-
 }

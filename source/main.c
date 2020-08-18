@@ -1,6 +1,6 @@
-/* Luiz Felipe Raveduti Zafiro - RA: 120513 */
-/* Leon Tenório da Silva - RA: 120--- */
-/* Operating Systems - Unifesp (SJC) - 2020 */
+/* Luiz Felipe Raveduti Zafiro       - RA: 120513 */
+/* Leon Tenório da Silva             - RA: 120488 */
+/* Operating Systems - Unifesp (SJC) - 2020       */
 
 /* Main file for the shell implementation project */
 
@@ -16,11 +16,7 @@ int main(int argc, char **argv){
 
     commandMatrixGenerator(argc, argv);  
 
-    if(numCommands == 1)
-        simpleCommands();
-
-    else
-        pipedCommands();
+    commandsExec();
 
     return 0;
 }
