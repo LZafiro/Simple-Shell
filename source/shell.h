@@ -1,6 +1,6 @@
-/* Luiz Felipe Raveduti Zafiro - RA: 120513 */
-/* Leon Tenório da Silva - RA: 120--- */
-/* Operating Systems - Unifesp (SJC) - 2020 */
+/* Luiz Felipe Raveduti Zafiro       - RA: 120513 */
+/* Leon Tenório da Silva             - RA: 120488 */
+/* Operating Systems - Unifesp (SJC) - 2020       */
 
 /* Headder file for the shell implementation project */
 
