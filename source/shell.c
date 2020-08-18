@@ -148,8 +148,14 @@ void pipedCommands(){
 
             /* If it is the last child */
             if(i == numCommands - 1){
-                close(fd[i - 1][1]);
-                dup2(fd[i - 1][0], STDIN_FILENO);
+                if(i>0){
+                    close(fd[i - 1][1]);
+                    dup2(fd[i - 1][0], STDIN_FILENO);
+                }
+                else if(file_in){
+                    in_fd = open(arq_in, O_RDONLY);
+                    dup2(in_fd, STDIN_FILENO);
+                }
                 if(file_out){
                     if(out_append){
                         out_fd = open(arq_out, O_WRONLY|O_APPEND|O_CREAT, 0777);
@@ -173,6 +179,9 @@ void pipedCommands(){
             execvp(matList[i][0], matList[i]);
             if(file_out && i==numCommands-1){
                 close(out_fd);
+            }
+            if(i==0 && arq_in){
+                close(in_fd);
             }
         }
 
