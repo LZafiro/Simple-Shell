@@ -6,12 +6,21 @@
 
 #include "shell.h"
 
+#define STR_LEN 10000
+
 /* Global variable definition */
 int numCommands = 0;
 char ***matList;
 
+bool file_in = false;
+char arq_in[STR_LEN];
+bool file_out = false;
+bool out_append = false;
+char arq_out[STR_LEN];
 
 void commandMatrixGenerator(int argc, char **argv){
+    bzero(arq_in, STR_LEN);
+    bzero(arq_out, STR_LEN);
     
     /* Array of pointers to char matrixes (strings) */
     matList = (char***)malloc(sizeof(char**));
@@ -35,15 +44,33 @@ void commandMatrixGenerator(int argc, char **argv){
     else matList[0] = NULL;
 
     /* Iterates thru all argc matrix (already without the fisrt line (./shell)) - cmd in main */
-    for(int i = 0; i < n; i++){
-
-        if(strcmp(cmd[i], "|") != 0){
+    i = 0;
+    while(i<n){
+        if(strcmp(cmd[i], "<")==0){
+            file_in = true;
+            strcpy(arq_in, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], ">")==0){
+            file_out = true;
+            out_append = false;
+            strcpy(arq_out, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], ">>")==0){
+            file_out = true;
+            out_append = true;
+            strcpy(arq_out, cmd[i+1]);
+            i = i + 2;
+        }
+        else if(strcmp(cmd[i], "|") != 0){
             /* Reallocs the matrix with one more line */
             matList[j] = (char **)realloc(matList[j], (k + 1) * sizeof(char*));
         
             /* Stores the string in the k line of the j matrix */
             matList[j][k] = cmd[i];
             k++;
+            i++;
         }
 
         else{
@@ -58,6 +85,7 @@ void commandMatrixGenerator(int argc, char **argv){
             j++;
             matList[j] = NULL;
             numCommands++;
+            i++;
         }
     }
 }
@@ -92,6 +120,8 @@ void pipedCommands(){
     pid_t pid;
     int i, status;
 
+    int out_fd, in_fd;
+
     /* Pipes initialization */
     for(i = 0; i < (numCommands - 1); i++){
         /* Creates a pipe based on the file descriptor passed */
@@ -118,9 +148,18 @@ void pipedCommands(){
             }
 
             /* If it is the last child */
-            if(i == numCommands - 1){
+            else if(i == numCommands - 1){
                 close(fd[i - 1][1]);
                 dup2(fd[i - 1][0], STDIN_FILENO);
+                if(file_out){
+                    if(out_append){
+                        out_fd = open(arq_out, O_WRONLY|O_APPEND|O_CREAT, 0777);
+                    }
+                    else{
+                        out_fd = open(arq_out, O_WRONLY|O_TRUNC|O_CREAT, 0777);
+                    }
+                    dup2(out_fd, STDOUT_FILENO);
+                }
             }
 
             /* If it is a "middle" child */
@@ -133,6 +172,9 @@ void pipedCommands(){
 
             /* Execution of the child */
             execvp(matList[i][0], matList[i]);
+            if(file_out && i==numCommands-1){
+                close(out_fd);
+            }
         }
 
         /* Parent */

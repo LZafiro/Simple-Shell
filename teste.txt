@@ -1,0 +1,1 @@
+-rwxrwxr-x 1 leon leon 17736 ago 17 22:14 shell
