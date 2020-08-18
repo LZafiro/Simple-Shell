@@ -169,9 +169,15 @@ void pipedCommands(){
 
             /* If it is a "middle" child */
             else{
-                close(fd[i - 1][1]);
+                if(i>0)
+                    close(fd[i - 1][1]);
                 close(fd[i][0]);
-                dup2(fd[i - 1][0], STDIN_FILENO);
+                if(i>0)
+                    dup2(fd[i - 1][0], STDIN_FILENO);
+                else if(file_in){
+                    in_fd = open(arq_in, O_RDONLY);
+                    dup2(in_fd, STDIN_FILENO);
+                }
                 dup2(fd[i][1], STDOUT_FILENO);
             }
 
@@ -180,7 +186,7 @@ void pipedCommands(){
             if(file_out && i==numCommands-1){
                 close(out_fd);
             }
-            if(i==0 && arq_in){
+            if(i==0 && file_in){
                 close(in_fd);
             }
         }
