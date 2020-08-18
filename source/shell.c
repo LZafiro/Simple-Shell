@@ -1,5 +1,6 @@
 /* Luiz Felipe Raveduti Zafiro       - RA: 120513 */
 /* Leon Tenório da Silva             - RA: 120488 */
+/* Alexandre Camargo Andreoli        - RA: 119943 */
 /* Operating Systems - Unifesp (SJC) - 2020       */
 
 /* Headder file implementation for the shell implementation project */
@@ -15,6 +16,7 @@ char arq_in[STR_LEN];
 bool file_out = false;
 bool out_append = false;
 char arq_out[STR_LEN];
+
 
 void commandMatrixGenerator(int argc, char **argv){
     
@@ -44,24 +46,25 @@ void commandMatrixGenerator(int argc, char **argv){
 
     /* Iterates thru all argc matrix (already without the fisrt line (./shell)) - cmd in main */
     i = 0;
-    while(i < n){
+    while(i < n){ 
         if(strcmp(cmd[i], "<")==0){
             file_in = true;
             strcpy(arq_in, cmd[i+1]);
             i = i + 2;
-        }
+        } 
         else if(strcmp(cmd[i], ">")==0){
             file_out = true;
             out_append = false;
             strcpy(arq_out, cmd[i+1]);
             i = i + 2;
-        }
+        } 
         else if(strcmp(cmd[i], ">>")==0){
             file_out = true;
             out_append = true;
             strcpy(arq_out, cmd[i+1]);
             i = i + 2;
-        }
+        } 
+
         else if(strcmp(cmd[i], "|") != 0){
             /* Reallocs the matrix with one more line */
             matList[j] = (char **)realloc(matList[j], (k + 1) * sizeof(char*));
