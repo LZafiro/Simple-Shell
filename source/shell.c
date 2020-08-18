@@ -90,28 +90,27 @@ void commandMatrixGenerator(int argc, char **argv){
     }
 }
 
-
+/*
 void simpleCommands(){
 
     int status;
     pid_t pid = fork();
     
-    /* Child */
+    //Child
     if(pid == 0){
-        /* 
-        * Creates child process 
-        * Passes the first command and first matrix, related to that command
-        */
+        //Creates child process 
+        //Passes the first command and first matrix, related to that command
+        
         execvp(matList[0][0], matList[0]);
         perror("Simple Command Execution Error");
     }
 
-    /* Parent */
+    //Parent
     else 
         waitpid(-1, &status, 0);
 
     return;
-}
+}*/
 
 
 void pipedCommands(){
@@ -148,7 +147,7 @@ void pipedCommands(){
             }
 
             /* If it is the last child */
-            else if(i == numCommands - 1){
+            if(i == numCommands - 1){
                 close(fd[i - 1][1]);
                 dup2(fd[i - 1][0], STDIN_FILENO);
                 if(file_out){

@@ -4,9 +4,6 @@
 
 /* Headder file for the shell implementation project */
 
-#ifndef _SHELL_H_
-#define _SHELL_H_
-
 /* Libs. */
 ////////////////////////////////////////////
 #include <stdio.h>
@@ -41,10 +38,8 @@ extern char ***matList;
 void commandMatrixGenerator(int argc, char **argv);
 
 /* Executes simple commands (non piped and non file types) */
-void simpleCommands();
+/*void simpleCommands();//Doesn't need it*/
 
 /* Executes piped commands */
 void pipedCommands();
 ////////////////////////////////////////////
-
-#endif _SHELL_H_
