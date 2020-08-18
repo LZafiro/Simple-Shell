@@ -41,31 +41,3 @@ void commandMatrixGenerator(int argc, char **argv);
 /* Executes piped and non piped commands */
 void commandsExec();
 ////////////////////////////////////////////
-
-
-/* Trash */
-
-/* Executes simple commands (non piped and non file types) */
-/*void simpleCommands();//Doesn't need it*/
-
-/*
-void simpleCommands(){
-
-    int status;
-    pid_t pid = fork();
-    
-    //Child
-    if(pid == 0){
-        //Creates child process 
-        //Passes the first command and first matrix, related to that command
-        
-        execvp(matList[0][0], matList[0]);
-        perror("Simple Command Execution Error");
-    }
-
-    //Parent
-    else 
-        waitpid(-1, &status, 0);
-
-    return;
-}*/

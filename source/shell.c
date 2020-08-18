@@ -11,6 +11,7 @@
 int numCommands = 0;
 char ***matList;
 
+/* Local Variables */
 bool file_in = false;
 char arq_in[STR_LEN];
 bool file_out = false;
@@ -46,19 +47,22 @@ void commandMatrixGenerator(int argc, char **argv){
 
     /* Iterates thru all argc matrix (already without the fisrt line (./shell)) - cmd in main */
     i = 0;
+
     while(i < n){ 
-        if(strcmp(cmd[i], "<")==0){
+        if(strcmp(cmd[i], "<") == 0){
             file_in = true;
             strcpy(arq_in, cmd[i+1]);
             i = i + 2;
         } 
-        else if(strcmp(cmd[i], ">")==0){
+
+        else if(strcmp(cmd[i], ">") == 0){
             file_out = true;
             out_append = false;
             strcpy(arq_out, cmd[i+1]);
             i = i + 2;
         } 
-        else if(strcmp(cmd[i], ">>")==0){
+
+        else if(strcmp(cmd[i], ">>") == 0){
             file_out = true;
             out_append = true;
             strcpy(arq_out, cmd[i+1]);
@@ -191,9 +195,6 @@ void commandsExec(){
                 
             /* Wait for all children */
             waitpid(-1, &status, 0);
-            /*  
-            ! Lembrar o que fazer com a variável status
-            */
         }
     }
 }
